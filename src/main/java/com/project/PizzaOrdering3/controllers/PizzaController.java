@@ -16,10 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-
-
-
-
 @RestController
 @RequestMapping("/pizzas")
 public class PizzaController {
@@ -35,18 +31,18 @@ public class PizzaController {
     @Autowired
     private PizzaRepository pizzaRepository;
 
-    @GetMapping("/")
+    @GetMapping("")
     public Iterable<Pizza> getAllPizzas() {
         return pizzaRepository.findAll();
     }
 
-    @PostMapping("path")
+    @PostMapping("/pizzas")
     public Pizza createPizza(@RequestBody Pizza pizza) {
         Pizza newPizza = this.pizzaRepository.save(pizza);
         return newPizza;
     }
 
-    @PutMapping("pizza/{id}")
+    @PutMapping("/pizzas/{id}")
     public Pizza updatePizza(@PathVariable("id") Integer id, @RequestBody Pizza pizza) {
         Optional<Pizza> pizzaToUpdateOptional = this.pizzaRepository.findById(id);
 
@@ -70,7 +66,7 @@ public class PizzaController {
         return updatedPizza;
     }
 
-    @DeleteMapping("/pizza/{id}")
+    @DeleteMapping("/pizzas/{id}")
     public Pizza deletePizza(@PathVariable("id") Integer id) {
         Optional<Pizza> pizzaToDeleteOptional = this.pizzaRepository.findById(id);
 
