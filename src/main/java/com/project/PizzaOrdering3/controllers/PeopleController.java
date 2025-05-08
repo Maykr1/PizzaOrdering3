@@ -1,9 +1,11 @@
 package com.project.PizzaOrdering3.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,11 +46,17 @@ public class PeopleController {
         person.setEmail(peopleRequest.getEmail());
         person.setPhoneNumber(peopleRequest.getPhoneNumber());
         
-        List<Orders> orders = (List<Orders>) ordersRepository.findAllById(peopleRequest.getOrderIds());
-        person.setOrders(orders);
+        //If the person has made an order
+        if (peopleRequest.getOrderIds() != null) {
+            List<Orders> orders = (List<Orders>) ordersRepository.findAllById(peopleRequest.getOrderIds());
+            person.setOrders(orders);
+        } else {
+            //Person has not made an order
+            person.setOrders(new ArrayList<>());
+        }
+        
 
         return peopleRepository.save(person);
-
     }
 
     @PutMapping("/{id}")
@@ -75,5 +83,19 @@ public class PeopleController {
         }
 
         return this.peopleRepository.save(personToUpdate);
+    }
+
+    @DeleteMapping("/{id}")
+    public People deletePerson(@PathVariable("id") Integer id) {
+        Optional<People> personToDeleteOptional = this.peopleRepository.findById(id);
+
+        if (!personToDeleteOptional.isPresent()) {
+            return null;
+        }
+
+        People personToDelete = personToDeleteOptional.get();
+
+        this.peopleRepository.delete(personToDelete);
+        return personToDelete;
     }
 }
