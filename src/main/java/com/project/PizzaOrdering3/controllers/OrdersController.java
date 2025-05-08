@@ -24,10 +24,10 @@ import com.project.PizzaOrdering3.repositories.PizzaRepository;
 @RequestMapping("/orders")
 public class OrdersController {
     @Autowired
-    private PizzaRepository pizzaRepository;
+    private OrdersRepository orderRepository;
 
     @Autowired
-    private OrdersRepository orderRepository;
+    private PizzaRepository pizzaRepository;
 
     @GetMapping("")
     public Iterable<Orders> getAllOrders() {
@@ -47,7 +47,7 @@ public class OrdersController {
         List<Pizza> pizzas = (List<Pizza>) pizzaRepository.findAllById(orderRequest.getPizzaIds());
         order.setPizzas(pizzas);
 
-        order.setCompleted(order.getCompleted());
+        order.setCompleted(orderRequest.getCompleted());
 
         return orderRepository.save(order);
     }

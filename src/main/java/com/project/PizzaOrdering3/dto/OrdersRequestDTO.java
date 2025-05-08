@@ -9,5 +9,6 @@ import lombok.Setter;
 @Setter
 public class OrdersRequestDTO {
     private String customerName;
+    private Boolean completed;
     private List<Integer> pizzaIds;
 }
