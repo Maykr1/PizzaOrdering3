@@ -42,7 +42,6 @@ public class OrdersController {
     @PostMapping("")
     public Orders createOrder(@RequestBody OrdersRequestDTO orderRequest) {
         Orders order = new Orders();
-        order.setCustomerName(orderRequest.getCustomerName());
 
         List<Pizza> pizzas = (List<Pizza>) pizzaRepository.findAllById(orderRequest.getPizzaIds());
         order.setPizzas(pizzas);
@@ -62,14 +61,14 @@ public class OrdersController {
 
         Orders orderToUpdate = orderToUpdateOptional.get();
 
-        if (order.getCustomerName() != null) {
-            orderToUpdate.setCustomerName(order.getCustomerName());;
-        }
         if (order.getPizzas() != null) {
             orderToUpdate.setPizzas(order.getPizzas());
         }
         if (order.getCompleted() != null) {
             orderToUpdate.setCompleted(order.getCompleted());
+        }
+        if (order.getPeople() != null) {
+            orderToUpdate.setPeople(order.getPeople());
         }
 
         Orders updatedOrder = this.orderRepository.save(orderToUpdate);

@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OrdersRequestDTO {
-    private String customerName;
-    private Boolean completed;
     private List<Integer> pizzaIds;
+    private Boolean completed;
+    private Integer personId;
 }
