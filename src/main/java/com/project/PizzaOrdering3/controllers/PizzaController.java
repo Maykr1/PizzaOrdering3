@@ -33,16 +33,22 @@ public class PizzaController {
 
     @GetMapping("")
     public Iterable<Pizza> getAllPizzas() {
-        return pizzaRepository.findAll();
+        return this.pizzaRepository.findAll();
     }
 
-    @PostMapping("/pizzas")
+    @GetMapping("/{id}")
+    public Optional<Pizza> getPizzaById(@PathVariable("id") Integer id) {
+        return this.pizzaRepository.findById(id);
+    }
+    
+
+    @PostMapping("")
     public Pizza createPizza(@RequestBody Pizza pizza) {
         Pizza newPizza = this.pizzaRepository.save(pizza);
         return newPizza;
     }
 
-    @PutMapping("/pizzas/{id}")
+    @PutMapping("/{id}")
     public Pizza updatePizza(@PathVariable("id") Integer id, @RequestBody Pizza pizza) {
         Optional<Pizza> pizzaToUpdateOptional = this.pizzaRepository.findById(id);
 
@@ -66,7 +72,7 @@ public class PizzaController {
         return updatedPizza;
     }
 
-    @DeleteMapping("/pizzas/{id}")
+    @DeleteMapping("/{id}")
     public Pizza deletePizza(@PathVariable("id") Integer id) {
         Optional<Pizza> pizzaToDeleteOptional = this.pizzaRepository.findById(id);
 
