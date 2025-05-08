@@ -42,7 +42,7 @@ public class OrdersController {
     @PostMapping("")
     public Orders createOrder(@RequestBody OrdersRequestDTO orderRequest) {
         Orders order = new Orders();
-        order.setCustomerName(order.getCustomerName());
+        order.setCustomerName(orderRequest.getCustomerName());
 
         List<Pizza> pizzas = (List<Pizza>) pizzaRepository.findAllById(orderRequest.getPizzaIds());
         order.setPizzas(pizzas);
