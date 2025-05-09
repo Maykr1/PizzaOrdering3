@@ -1,5 +1,6 @@
 package com.project.PizzaOrdering3.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.PizzaOrdering3.dto.OrdersRequestDTO;
+import com.project.PizzaOrdering3.dto.OrderDTO;
 import com.project.PizzaOrdering3.entities.Orders;
 import com.project.PizzaOrdering3.entities.Pizza;
 import com.project.PizzaOrdering3.repositories.OrdersRepository;
 import com.project.PizzaOrdering3.repositories.PizzaRepository;
+
+import jakarta.transaction.Transactional;
 
 @RestController
 @RequestMapping("/orders")
@@ -40,19 +43,24 @@ public class OrdersController {
     }
 
     @PostMapping("")
-    public Orders createOrder(@RequestBody OrdersRequestDTO orderRequest) {
+    public Orders createOrder(@RequestBody OrderDTO orderDTO) {
         Orders order = new Orders();
+        
+        if (orderDTO.getPizzaIds() != null && !orderDTO.getPizzaIds().isEmpty()) {
+            List<Pizza> pizzas = (List<Pizza>) pizzaRepository.findAllById(orderDTO.getPizzaIds());
+            order.setPizzas(pizzas);
+        } else {
+            order.setPizzas(new ArrayList<>());
+        }
 
-        List<Pizza> pizzas = (List<Pizza>) pizzaRepository.findAllById(orderRequest.getPizzaIds());
-        order.setPizzas(pizzas);
+        order.setCompleted(orderDTO.getCompleted());
 
-        order.setCompleted(orderRequest.getCompleted());
-
-        return orderRepository.save(order);
+        Orders newOrder = this.orderRepository.save(order);
+        return orderRepository.save(newOrder);
     }
 
     @PutMapping("/{id}")
-    public Orders updateOrder(@PathVariable("id") Integer id, @RequestBody Orders order) {
+    public Orders updateOrder(@PathVariable("id") Integer id, @RequestBody OrderDTO orderDTO) {
         Optional<Orders> orderToUpdateOptional = this.orderRepository.findById(id);
         
         if (!orderToUpdateOptional.isPresent()) {
@@ -61,14 +69,12 @@ public class OrdersController {
 
         Orders orderToUpdate = orderToUpdateOptional.get();
 
-        if (order.getPizzas() != null) {
-            orderToUpdate.setPizzas(order.getPizzas());
+        if (orderDTO.getPizzaIds() != null) {
+            List<Pizza> pizzas = (List<Pizza>) pizzaRepository.findAllById(orderDTO.getPizzaIds());
+            orderToUpdate.setPizzas(pizzas);
         }
-        if (order.getCompleted() != null) {
-            orderToUpdate.setCompleted(order.getCompleted());
-        }
-        if (order.getPeople() != null) {
-            orderToUpdate.setPeople(order.getPeople());
+        if (orderDTO.getCompleted() != null) {
+            orderToUpdate.setCompleted(orderDTO.getCompleted());
         }
 
         Orders updatedOrder = this.orderRepository.save(orderToUpdate);
@@ -94,6 +100,7 @@ public class OrdersController {
     }
     //curl -X PUT "http://localhost:8080/orders/1?completed=true"
 
+    @Transactional
     @DeleteMapping("/{id}")
     public Orders deleteOrder(@PathVariable("id") Integer id) {
         Optional<Orders> orderToDeleteOptional = this.orderRepository.findById(id);
@@ -103,6 +110,9 @@ public class OrdersController {
         }
 
         Orders orderToDelete = orderToDeleteOptional.get();
+        orderToDelete.getPizzas().clear();
+        orderRepository.save(orderToDelete);
+
         this.orderRepository.delete(orderToDelete);
         return orderToDelete;
     }

@@ -9,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +24,7 @@ public class Orders {
 
     @ManyToMany
     @JoinTable(
-        name="order_pizzas",
+        name="order_pizza",
         joinColumns = @JoinColumn(name="order_id"),
         inverseJoinColumns = @JoinColumn(name="pizza_id")
     )
@@ -33,9 +32,4 @@ public class Orders {
 
     @Column(name="COMPLETED")
     private Boolean completed;
-
-    @ManyToOne
-    @JoinColumn(name="customer_id")
-    
-    private People people;
 }

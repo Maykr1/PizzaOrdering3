@@ -33,6 +33,6 @@ public class Pizza {
     private Double price;
 
     @ManyToMany(mappedBy="pizzas")
-    @JsonIgnore //This is to stop it from doing a loop
+    @JsonIgnore
     private List<Orders> orders;
 }
